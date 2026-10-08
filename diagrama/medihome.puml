@@ -1,0 +1,128 @@
+@startuml MediHome
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 11
+skinparam nodesep 25
+skinparam ranksep 40
+skinparam class {
+  BackgroundColor #FDFEFE
+  BorderColor #1F618D
+  ArrowColor #1F618D
+}
+title MediHome - Diagrama de Clases
+
+abstract class Persona {
+  - documento : String
+  - nombres : String
+  - apellidos : String
+  - telefono : String
+  + Persona()
+  + Persona(String, String, String, String)
+  + getNombreCompleto() : String
+  + get/setDocumento(String)
+  + get/setNombres(String)
+  + get/setApellidos(String)
+  + get/setTelefono(String)
+}
+
+class Paciente {
+  - fechaNacimiento : LocalDate
+  - direccion : String
+  - eps : String
+  - alergias : List<String>
+  - historialAtenciones : List<Atencion>
+  + Paciente()
+  + Paciente(String x4, LocalDate, String, String)
+  + calcularEdad() : int
+  + agregarAlergia(String) : void
+  + agregarAtencion(Atencion) : void
+  + get/setFechaNacimiento(LocalDate)
+  + get/setDireccion(String)
+  + get/setEps(String)
+  + get/setAlergias(List<String>)
+  + get/setHistorialAtenciones(List<Atencion>)
+}
+
+class Profesional {
+  - registroProfesional : String
+  - especialidad : String
+  - disponible : boolean
+  + Profesional()
+  + Profesional(String x6)
+  + get/setRegistroProfesional(String)
+  + get/setEspecialidad(String)
+  + is/setDisponible(boolean)
+}
+
+class ServicioDomiciliario {
+  - codigo : String
+  - nombre : String
+  - descripcion : String
+  - tarifa : double
+  - duracionMinutos : int
+  + ServicioDomiciliario()
+  + ServicioDomiciliario(String x3, double, int)
+  + get/setCodigo(String)
+  + get/setNombre(String)
+  + get/setDescripcion(String)
+  + get/setTarifa(double)
+  + get/setDuracionMinutos(int)
+}
+
+class Atencion {
+  - numero : int
+  - fechaHora : LocalDateTime
+  - paciente : Paciente
+  - profesional : Profesional
+  - servicio : ServicioDomiciliario
+  - motivoConsulta : String
+  - diagnostico : String
+  - observaciones : String
+  - estado : EstadoAtencion
+  - mediciones : List<MedicionSignosVitales>
+  + Atencion()
+  + Atencion(int, LocalDateTime, Paciente, Profesional, ServicioDomiciliario, String)
+  + iniciar() : void
+  + registrarMedicion(MedicionSignosVitales) : void
+  + finalizar(String, String) : void
+  + calcularValorTotal() : double
+  + generarReporte() : String
+  {method} + get/set de los 10 atributos
+}
+
+class MedicionSignosVitales {
+  - fechaHora : LocalDateTime
+  - presionSistolica : int
+  - presionDiastolica : int
+  - frecuenciaCardiaca : int
+  - frecuenciaRespiratoria : int
+  - temperatura : double
+  - saturacionOxigeno : int
+  + MedicionSignosVitales()
+  + MedicionSignosVitales(LocalDateTime, int x4, double, int)
+  + evaluarAlertas() : List<String>
+  + esNormal() : boolean
+  + getPresionArterial() : String
+  {method} + get/set de los 7 atributos
+}
+
+enum EstadoAtencion <<enumeration>> {
+  PROGRAMADA
+  EN_CURSO
+  FINALIZADA
+  CANCELADA
+}
+
+class Main {
+  + {static} main(String[]) : void
+}
+
+Persona <|-- Paciente
+Persona <|-- Profesional
+Paciente "1" -- "0..*" Atencion : recibe >
+Profesional "1" -- "0..*" Atencion : presta >
+Atencion "0..*" --> "1" ServicioDomiciliario : corresponde a >
+Atencion "1" *-- "0..*" MedicionSignosVitales : registra >
+Atencion --> "1" EstadoAtencion
+Main ..> Atencion : <<use>>
+@enduml

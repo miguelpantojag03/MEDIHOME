@@ -1,0 +1,83 @@
+@startuml MediHome_Resumido
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+skinparam class {
+  BackgroundColor #FDFEFE
+  BorderColor #1F618D
+  ArrowColor #1F618D
+}
+title MediHome - Diagrama de Clases
+
+abstract class Persona {
+  - documento : String
+  - nombres : String
+  - apellidos : String
+  - telefono : String
+  + getNombreCompleto() : String
+  + getters / setters
+}
+
+class Paciente {
+  - fechaNacimiento : LocalDate
+  - direccion : String
+  - eps : String
+  - alergias : List<String>
+  + calcularEdad() : int
+  + agregarAlergia(alergia : String) : void
+  + getters / setters
+}
+
+class Profesional {
+  - registroProfesional : String
+  - especialidad : String
+  - disponible : boolean
+  + getters / setters
+}
+
+class ServicioDomiciliario {
+  - codigo : String
+  - nombre : String
+  - descripcion : String
+  - tarifa : double
+  + getters / setters
+}
+
+class Atencion {
+  - numero : int
+  - fechaHora : LocalDateTime
+  - diagnostico : String
+  - estado : EstadoAtencion
+  + registrarMedicion(m : MedicionSignosVitales) : void
+  + finalizar(diagnostico : String) : void
+  + generarReporte() : String
+  + getters / setters
+}
+
+class MedicionSignosVitales {
+  - presionArterial : String
+  - frecuenciaCardiaca : int
+  - temperatura : double
+  - saturacionOxigeno : int
+  + evaluarAlertas() : List<String>
+  + getters / setters
+}
+
+enum EstadoAtencion {
+  PROGRAMADA
+  EN_CURSO
+  FINALIZADA
+}
+
+class Main {
+  + {static} main(args : String[]) : void
+}
+
+Persona <|-- Paciente
+Persona <|-- Profesional
+Paciente "1" -- "0..*" Atencion : recibe >
+Profesional "1" -- "0..*" Atencion : presta >
+Atencion "0..*" --> "1" ServicioDomiciliario
+Atencion "1" *-- "1..*" MedicionSignosVitales : registra >
+Atencion --> EstadoAtencion
+Main ..> Atencion : <<use>>
+@enduml
